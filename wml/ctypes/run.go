@@ -2,9 +2,9 @@ package ctypes
 
 import (
 	"encoding/xml"
-	"github.com/gomutex/godocx/dml"
-	"github.com/gomutex/godocx/internal"
-	"github.com/gomutex/godocx/wml/stypes"
+	"github.com/refocus-com/godocx/dml"
+	"github.com/refocus-com/godocx/internal"
+	"github.com/refocus-com/godocx/wml/stypes"
 )
 
 // A Run is part of a paragraph that has its own style. It could be
@@ -38,6 +38,9 @@ type RunChild struct {
 
 	//Deleted Field Code
 	DelInstrText *Text `xml:"delInstrText,omitempty"`
+
+	// Complex Field Character
+	FldChar *FldChar `xml:"fldChar,omitempty"`
 
 	//Non Breaking Hyphen Character
 	NoBreakHyphen *Empty `xml:"noBreakHyphen,omitempty"`
@@ -95,7 +98,6 @@ type RunChild struct {
 
 	//TODO:
 	// 	w:object    Inline Embedded Object
-	// w:fldChar    Complex Field Character
 	// w:ruby    Phonetic Guide
 	// w:footnoteReference    Footnote Reference
 	// w:endnoteReference    Endnote Reference
@@ -205,6 +207,15 @@ loop:
 				r.Children = append(r.Children, RunChild{
 					Break: &br,
 				})
+			case "fldChar":
+				fldChar := &FldChar{}
+				if err = d.DecodeElement(fldChar, &elem); err != nil {
+					return err
+				}
+
+				r.Children = append(r.Children, RunChild{
+					FldChar: fldChar,
+				})
 			case "drawing":
 				drawingElem := &dml.Drawing{}
 				if err = d.DecodeElement(drawingElem, &elem); err != nil {
@@ -242,6 +253,25 @@ type Sym struct {
 	Char *string `xml:"char,attr,omitempty"`
 }
 
+// FldChar represents a complex field character in a run.
+type FldChar struct {
+	FldCharType string `xml:"fldCharType,attr"`
+}
+
+func NewFldChar(fldCharType string) *FldChar {
+	return &FldChar{FldCharType: fldCharType}
+}
+
+func (f FldChar) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	start.Name.Local = "w:fldChar"
+	start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "w:fldCharType"}, Value: f.FldCharType})
+
+	if err := e.EncodeToken(start); err != nil {
+		return err
+	}
+	return e.EncodeToken(xml.EndElement{Name: start.Name})
+}
+
 func NewSym(font, char string) *Sym {
 	return &Sym{
 		Font: &font,
@@ -275,6 +305,8 @@ func (r *Run) MarshalChild(e *xml.Encoder) error {
 			err = child.InstrText.MarshalXML(e, xml.StartElement{Name: xml.Name{Local: "w:instrText"}})
 		case child.DelInstrText != nil:
 			err = child.DelInstrText.MarshalXML(e, xml.StartElement{Name: xml.Name{Local: "w:delInstrText"}})
+		case child.FldChar != nil:
+			err = child.FldChar.MarshalXML(e, xml.StartElement{Name: xml.Name{Local: "w:fldChar"}})
 		case child.NoBreakHyphen != nil:
 			err = child.NoBreakHyphen.MarshalXML(e, xml.StartElement{Name: xml.Name{Local: "w:noBreakHyphen"}})
 		case child.SoftHyphen != nil:

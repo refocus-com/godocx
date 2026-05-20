@@ -1,8 +1,8 @@
 package docx
 
 import (
-	"github.com/gomutex/godocx/wml/ctypes"
-	"github.com/gomutex/godocx/wml/stypes"
+	"github.com/refocus-com/godocx/wml/ctypes"
+	"github.com/refocus-com/godocx/wml/stypes"
 )
 
 type Run struct {
@@ -186,6 +186,27 @@ func (r *Run) AddBreak(breakType *stypes.BreakType) {
 	r.ct.Children = append(r.ct.Children, ctypes.RunChild{
 		Break: &br,
 	})
+}
+
+func (r *Run) AddFieldChar(fldCharType string) *Run {
+	r.ct.Children = append(r.ct.Children, ctypes.RunChild{
+		FldChar: ctypes.NewFldChar(fldCharType),
+	})
+	return r
+}
+
+func (r *Run) AddInstrText(text string) *Run {
+	r.ct.Children = append(r.ct.Children, ctypes.RunChild{
+		InstrText: ctypes.TextFromString(text),
+	})
+	return r
+}
+
+func (r *Run) AddTab() *Run {
+	r.ct.Children = append(r.ct.Children, ctypes.RunChild{
+		Tab: &ctypes.Empty{},
+	})
+	return r
 }
 
 // Style sets the style of the run.

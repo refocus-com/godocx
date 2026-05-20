@@ -5,10 +5,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gomutex/godocx/dml/dmlct"
-	"github.com/gomutex/godocx/dml/dmlprops"
-	"github.com/gomutex/godocx/dml/dmlst"
-	"github.com/gomutex/godocx/dml/shapes"
+	"github.com/refocus-com/godocx/dml/dmlct"
+	"github.com/refocus-com/godocx/dml/dmlprops"
+	"github.com/refocus-com/godocx/dml/dmlst"
+	"github.com/refocus-com/godocx/dml/shapes"
 )
 
 func TestPicMarshalXML(t *testing.T) {

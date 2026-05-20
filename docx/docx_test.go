@@ -4,7 +4,7 @@ import (
 	"log"
 	"testing"
 
-	"github.com/gomutex/godocx/wml/ctypes"
+	"github.com/refocus-com/godocx/wml/ctypes"
 )
 
 func setupRootDoc(t *testing.T) *RootDoc {

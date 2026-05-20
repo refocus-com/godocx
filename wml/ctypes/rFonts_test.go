@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gomutex/godocx/wml/stypes"
+	"github.com/refocus-com/godocx/wml/stypes"
 )
 
 func TestRunFontsMarshalXML(t *testing.T) {

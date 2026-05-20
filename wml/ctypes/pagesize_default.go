@@ -1,6 +1,6 @@
 package ctypes
 
-import "github.com/gomutex/godocx/wml/stypes"
+import "github.com/refocus-com/godocx/wml/stypes"
 
 /*
 code  |  name    |  size

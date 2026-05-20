@@ -3,8 +3,8 @@ package ctypes
 import (
 	"encoding/xml"
 
-	"github.com/gomutex/godocx/internal"
-	"github.com/gomutex/godocx/wml/stypes"
+	"github.com/refocus-com/godocx/internal"
+	"github.com/refocus-com/godocx/wml/stypes"
 )
 
 type Paragraph struct {
@@ -25,8 +25,40 @@ type Paragraph struct {
 }
 
 type ParagraphChild struct {
-	Link *Hyperlink // w:hyperlink
-	Run  *Run       // i.e w:r
+	BookmarkStart *BookmarkStart // w:bookmarkStart
+	BookmarkEnd   *BookmarkEnd   // w:bookmarkEnd
+	Link          *Hyperlink     // w:hyperlink
+	Run           *Run           // i.e w:r
+}
+
+type BookmarkStart struct {
+	ID   string
+	Name string
+}
+
+func (b BookmarkStart) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	start.Name.Local = "w:bookmarkStart"
+	start.Attr = append(start.Attr,
+		xml.Attr{Name: xml.Name{Local: "w:id"}, Value: b.ID},
+		xml.Attr{Name: xml.Name{Local: "w:name"}, Value: b.Name},
+	)
+	if err := e.EncodeToken(start); err != nil {
+		return err
+	}
+	return e.EncodeToken(xml.EndElement{Name: start.Name})
+}
+
+type BookmarkEnd struct {
+	ID string
+}
+
+func (b BookmarkEnd) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	start.Name.Local = "w:bookmarkEnd"
+	start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "w:id"}, Value: b.ID})
+	if err := e.EncodeToken(start); err != nil {
+		return err
+	}
+	return e.EncodeToken(xml.EndElement{Name: start.Name})
 }
 
 type Hyperlink struct {
@@ -69,6 +101,14 @@ func (p Paragraph) MarshalXML(e *xml.Encoder, start xml.StartElement) (err error
 	}
 
 	for _, cElem := range p.Children {
+		if cElem.BookmarkStart != nil {
+			if err = cElem.BookmarkStart.MarshalXML(e, xml.StartElement{
+				Name: xml.Name{Local: "w:bookmarkStart"},
+			}); err != nil {
+				return err
+			}
+		}
+
 		if cElem.Run != nil {
 			if err = cElem.Run.MarshalXML(e, xml.StartElement{
 				Name: xml.Name{Local: "w:r"},
@@ -80,6 +120,14 @@ func (p Paragraph) MarshalXML(e *xml.Encoder, start xml.StartElement) (err error
 		if cElem.Link != nil {
 			if err = e.EncodeElement(cElem.Link, xml.StartElement{
 				Name: xml.Name{Local: "w:hyperlink"},
+			}); err != nil {
+				return err
+			}
+		}
+
+		if cElem.BookmarkEnd != nil {
+			if err = cElem.BookmarkEnd.MarshalXML(e, xml.StartElement{
+				Name: xml.Name{Local: "w:bookmarkEnd"},
 			}); err != nil {
 				return err
 			}

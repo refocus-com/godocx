@@ -5,16 +5,17 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strconv"
 	"strings"
 
-	"github.com/gomutex/godocx/common/constants"
-	"github.com/gomutex/godocx/common/units"
-	"github.com/gomutex/godocx/dml"
-	"github.com/gomutex/godocx/dml/dmlct"
-	"github.com/gomutex/godocx/dml/dmlpic"
-	"github.com/gomutex/godocx/internal"
-	"github.com/gomutex/godocx/wml/ctypes"
-	"github.com/gomutex/godocx/wml/stypes"
+	"github.com/refocus-com/godocx/common/constants"
+	"github.com/refocus-com/godocx/common/units"
+	"github.com/refocus-com/godocx/dml"
+	"github.com/refocus-com/godocx/dml/dmlct"
+	"github.com/refocus-com/godocx/dml/dmlpic"
+	"github.com/refocus-com/godocx/internal"
+	"github.com/refocus-com/godocx/wml/ctypes"
+	"github.com/refocus-com/godocx/wml/stypes"
 )
 
 // Paragraph represents a paragraph in a DOCX document.
@@ -227,6 +228,23 @@ func (p *Paragraph) AddRun() *Run {
 	p.ct.Children = append(p.ct.Children, ctypes.ParagraphChild{Run: run})
 
 	return newRun(p.root, run)
+}
+
+func (p *Paragraph) AddBookmarkStart(id int, name string) {
+	p.ct.Children = append(p.ct.Children, ctypes.ParagraphChild{
+		BookmarkStart: &ctypes.BookmarkStart{
+			ID:   strconv.Itoa(id),
+			Name: name,
+		},
+	})
+}
+
+func (p *Paragraph) AddBookmarkEnd(id int) {
+	p.ct.Children = append(p.ct.Children, ctypes.ParagraphChild{
+		BookmarkEnd: &ctypes.BookmarkEnd{
+			ID: strconv.Itoa(id),
+		},
+	})
 }
 
 // GetStyle retrieves the style information applied to the Paragraph.

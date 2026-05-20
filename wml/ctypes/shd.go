@@ -3,7 +3,7 @@ package ctypes
 import (
 	"encoding/xml"
 
-	"github.com/gomutex/godocx/wml/stypes"
+	"github.com/refocus-com/godocx/wml/stypes"
 )
 
 // Shading represents the shading properties for a run in a WordprocessingML document.

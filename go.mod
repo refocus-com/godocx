@@ -1,6 +1,6 @@
-module github.com/gomutex/godocx
+module github.com/refocus-com/godocx
 
-go 1.18
+go 1.26.3
 
 require github.com/stretchr/testify v1.9.0
 

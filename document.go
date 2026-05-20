@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/gomutex/godocx/docx"
-	"github.com/gomutex/godocx/packager"
+	"github.com/refocus-com/godocx/docx"
+	"github.com/refocus-com/godocx/packager"
 )
 
 //go:embed templates/default.docx

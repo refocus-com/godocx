@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 	"sync"
 
-	"github.com/gomutex/godocx/wml/ctypes"
+	"github.com/refocus-com/godocx/wml/ctypes"
 )
 
 // RootDoc represents the root document of an Office Open XML (OOXML) document.
@@ -15,8 +15,8 @@ type RootDoc struct {
 	FileMap     sync.Map      // FileMap is a synchronized map for managing files related to the document.
 	RootRels    Relationships // RootRels represents relationships at the root level.
 	ContentType ContentTypes
-	Document    *Document      // Document is the main document structure.
-	DocStyles   *ctypes.Styles // Document styles
+	Document    *Document         // Document is the main document structure.
+	DocStyles   *ctypes.Styles    // Document styles
 	Numbering   *NumberingManager // Numbering manager for list instances
 
 	rID        int // rId is used to generate unique relationship IDs.

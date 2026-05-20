@@ -6,8 +6,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gomutex/godocx/internal"
-	"github.com/gomutex/godocx/wml/stypes"
+	"github.com/refocus-com/godocx/internal"
+	"github.com/refocus-com/godocx/wml/stypes"
 )
 
 func TestTableProp_MarshalXML(t *testing.T) {
