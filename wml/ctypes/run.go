@@ -256,15 +256,28 @@ type Sym struct {
 // FldChar represents a complex field character in a run.
 type FldChar struct {
 	FldCharType string `xml:"fldCharType,attr"`
+	Dirty       *bool  `xml:"dirty,attr,omitempty"`
 }
 
 func NewFldChar(fldCharType string) *FldChar {
 	return &FldChar{FldCharType: fldCharType}
 }
 
+func NewDirtyFldChar(fldCharType string) *FldChar {
+	dirty := true
+	return &FldChar{FldCharType: fldCharType, Dirty: &dirty}
+}
+
 func (f FldChar) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	start.Name.Local = "w:fldChar"
 	start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "w:fldCharType"}, Value: f.FldCharType})
+	if f.Dirty != nil {
+		value := "false"
+		if *f.Dirty {
+			value = "true"
+		}
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "w:dirty"}, Value: value})
+	}
 
 	if err := e.EncodeToken(start); err != nil {
 		return err

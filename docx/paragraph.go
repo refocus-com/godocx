@@ -291,6 +291,32 @@ func (p *Paragraph) AddLink(text string, link string) *Hyperlink {
 	return newHyperlink(p.root, hyperLink)
 }
 
+func (p *Paragraph) AddInternalLink(text string, bookmark string) *Hyperlink {
+	history := true
+	runChildren := []ctypes.RunChild{}
+	runChildren = append(runChildren, ctypes.RunChild{
+		Text: ctypes.TextFromString(text),
+	})
+	run := &ctypes.Run{
+		Children: runChildren,
+		Property: &ctypes.RunProperty{
+			Style: &ctypes.CTString{
+				Val: constants.HyperLinkStyle,
+			},
+		},
+	}
+
+	hyperLink := &ctypes.Hyperlink{
+		Anchor:  bookmark,
+		History: &history,
+		Run:     run,
+	}
+
+	p.ct.Children = append(p.ct.Children, ctypes.ParagraphChild{Link: hyperLink})
+
+	return newHyperlink(p.root, hyperLink)
+}
+
 // AddDrawing adds a new drawing (image) to the Paragraph.
 //
 // Parameters:

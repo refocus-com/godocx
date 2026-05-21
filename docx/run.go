@@ -195,6 +195,13 @@ func (r *Run) AddFieldChar(fldCharType string) *Run {
 	return r
 }
 
+func (r *Run) AddDirtyFieldChar(fldCharType string) *Run {
+	r.ct.Children = append(r.ct.Children, ctypes.RunChild{
+		FldChar: ctypes.NewDirtyFldChar(fldCharType),
+	})
+	return r
+}
+
 func (r *Run) AddInstrText(text string) *Run {
 	r.ct.Children = append(r.ct.Children, ctypes.RunChild{
 		InstrText: ctypes.TextFromString(text),

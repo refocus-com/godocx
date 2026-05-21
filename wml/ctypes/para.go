@@ -63,9 +63,39 @@ func (b BookmarkEnd) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 
 type Hyperlink struct {
 	XMLName  xml.Name `xml:"http://schemas.openxmlformats.org/wordprocessingml/2006/main hyperlink,omitempty"`
-	ID       string   `xml:"http://schemas.openxmlformats.org/officeDocument/2006/relationships id,attr"`
+	ID       string   `xml:"http://schemas.openxmlformats.org/officeDocument/2006/relationships id,attr,omitempty"`
+	Anchor   string   `xml:"http://schemas.openxmlformats.org/wordprocessingml/2006/main anchor,attr,omitempty"`
+	History  *bool    `xml:"http://schemas.openxmlformats.org/wordprocessingml/2006/main history,attr,omitempty"`
 	Run      *Run
 	Children []ParagraphChild
+}
+
+func (h Hyperlink) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
+	start.Name.Local = "w:hyperlink"
+	if h.ID != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "r:id"}, Value: h.ID})
+	}
+	if h.Anchor != "" {
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "w:anchor"}, Value: h.Anchor})
+	}
+	if h.History != nil {
+		value := "0"
+		if *h.History {
+			value = "1"
+		}
+		start.Attr = append(start.Attr, xml.Attr{Name: xml.Name{Local: "w:history"}, Value: value})
+	}
+
+	if err := e.EncodeToken(start); err != nil {
+		return err
+	}
+	if h.Run != nil {
+		if err := h.Run.MarshalXML(e, xml.StartElement{Name: xml.Name{Local: "w:r"}}); err != nil {
+			return err
+		}
+	}
+
+	return e.EncodeToken(xml.EndElement{Name: start.Name})
 }
 
 func (p Paragraph) MarshalXML(e *xml.Encoder, start xml.StartElement) (err error) {
